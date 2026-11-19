@@ -93,8 +93,37 @@ render_banner() {
   clear
   echo ""
   case "$B" in
-    kali)
-      neofetch --ascii_distro Kali
+    skull)
+      local HOST_NAME=$(cat ~/.kali_host 2>/dev/null)
+      [[ -z "$HOST_NAME" ]] && HOST_NAME="localhost"
+      local KERNEL=$(uname -r | cut -d'-' -f1)
+      local UPTIME=$(uptime -p 2>/dev/null | sed 's/up //')
+      [[ -z "$UPTIME" ]] && UPTIME="Active"
+      local PKGS=$(dpkg -l 2>/dev/null | grep -c '^ii')
+
+      printf '%b\n' "\e[1;36m     .ed\"\"\"\" \"\"\"\$\$\$\$be.         \e[1;32mkali\e[1;37m@\e[1;34m${HOST_NAME}
+\e[1;36m   -\"           ^\"\"**\$\$\$e.      \e[1;37m------------------
+\e[1;36m .\"                   '\$\$\$c     \e[1;36mOS\e[1;37m: Kali Rolling
+\e[1;36m/                      \"4\$\$b    \e[1;36mHost\e[1;37m: Termux Mobile
+\e[1;36md  3                      \$\$\$\$    \e[1;36mKernel\e[1;37m: ${KERNEL}
+\e[1;36m\$  *                   .\$\$\$\$\$\$   \e[1;36mUptime\e[1;37m: ${UPTIME}
+\e[1;36m.\$  ^c           \$\$\$\$\$e\$\$\$\$\$\$\$\$.  \e[1;36mPackages\e[1;37m: ${PKGS} (dpkg)
+\e[1;36md\$L  4.         4\$\$\$\$\$\$\$\$\$\$\$\$\$\$b \e[1;36mShell\e[1;37m: zsh ${ZSH_VERSION}
+\e[1;36m\$\$\$\$b ^ceeeee.  4\$\$ECL.F*\$\$\$\$\$\$\$ \e[1;36mTheme\e[1;37m: Kali-Skull
+\e[1;36m\$\$\$\$P d\$\$\$\$F \$ \$\$\$\$\$\$\$\$\$- \$\$\$\$\$\$ \e[1;36mSwitch\e[1;37m: show list
+\e[1;36m3\$\$\$F \"\$\$\$\$b   \$\"\$\$\$\$\$\$\$  \$\$\$\$*\"
+\e[1;36m \$\$P\"  \"\$\$b   .\$ \$\$\$\$\$...e\$\$     \e[40m   \e[41m   \e[42m   \e[43m   \e[44m   \e[45m   \e[46m   \e[47m   \e[0m
+\e[1;36m  *c    ..    \$\$ 3\$\$\$\$\$\$\$\$\$\$eF   \e[100m   \e[101m   \e[102m   \e[103m   \e[104m   \e[105m   \e[106m   \e[107m   \e[0m
+\e[1;36m    %ce\"\"    \$\$\$  \$\$\$\$\$\$\$\$\$\$*
+\e[1;36m     *\$e.    *** d\$\$\$\$\$\"L\$\$
+\e[1;36m      \$\$\$      4J\$\$\$\$\$% \$\$\$
+\e[1;36m     \$'\"=e....\$*\$\$**\$\$cz\$\$\"
+\e[1;36m     \$  *=%4.\$ L L\$ P3\$\$\$F
+\e[1;36m     \$   \"%*ebJLzb\$e\$\$\$\$\$b
+\e[1;36m      %..      4\$\$\$\$\$\$\$\$\$\$
+\e[1;36m       \$\$\$e   z\$\$\$\$\$\$\$\$\$\$%
+\e[1;36m        \"*\$c  \"\$\$\$\$\$\$\$P\"
+\e[1;36m          \"\"\"*\$\$\$\$\$\$\$\"\e[0m"
       ;;
     eyes)
       local ART='\e[1;31m      ..::::::::..              ..::::::::..
@@ -163,36 +192,8 @@ render_banner() {
 └────────────────────────────────────────┘\e[0m'
       center_block "$ART"
       ;;
-    skull|*)
-      local ART='\e[1;36m       .ed"""" """$$$$be.
-     -"           ^""**$$$e.
-   ."                   '\''$$$c
-  /                      "4$$b
- d  3                      $$$$
- $  *                   .$$$$$$
-.$  ^c           $$$$$e$$$$$$$$.
-d$L  4.         4$$$$$$$$$$$$$$b
-$$$$b ^ceeeee.  4$$ECL.F*$$$$$$$
-$$$$P d$$$$F $ $$$$$$$$$- $$$$$$
-3$$$F "$$$$b   $"$$$$$$$  $$$$*"
- $$P"  "$$b   .$ $$$$$...e$$
-  *c    ..    $$ 3$$$$$$$$$$eF
-    %%ce""    $$$  $$$$$$$$$$*
-     *$e.    *** d$$$$$"L$$
-      $$$      4J$$$$$%% $$$
-     $"\x27$=e....$*$$**$cz$$"
-     $  *=%4.$ L L$ P3$$$F
-     $   "%%*ebJLzb$e$$$$$b
-      %%..      4$$$$$$$$$$
-       $$$e   z$$$$$$$$$$%%
-        "*$c  "$$$$$$$P"
-          """*$$$$$$$"
-\e[1;32m┌──────────────────────────────────────┐
-│ \e[1;36mOS\e[1;37m     : Kali Rolling (Termux)       \e[1;32m│
-│ \e[1;36mSHELL\e[1;37m  : Zsh + KaliPrompt            \e[1;32m│
-│ \e[1;36mSWITCH\e[1;37m : show list | kaliset <name>  \e[1;32m│
-└──────────────────────────────────────┘\e[0m'
-      center_block "$ART"
+    kali|*)
+      neofetch --ascii_distro Kali
       ;;
   esac
   echo ""
@@ -201,15 +202,15 @@ $$$$P d$$$$F $ $$$$$$$$$- $$$$$$
 # --- Banner Switcher Command (show <name> | show list) ---
 show() {
   case "$1" in
-    skull|eyes|kali|root|fsociety|dev|hydra)
+    kali|skull|eyes|root|fsociety|dev|hydra)
       echo "$1" > ~/.active_banner
       render_banner "$1"
       ;;
     list)
       echo -e "\e[1;36mAvailable Banners:\e[0m"
-      echo -e "  \e[1;32m• skull\e[0m     (Default High-Detail Skull)"
+      echo -e "  \e[1;32m• kali\e[0m      (Default Kali Dragon + Neofetch)"
+      echo -e "  \e[1;32m• skull\e[0m     (High-Detail Skull + System Info)"
       echo -e "  \e[1;32m• eyes\e[0m      (Dot-Coded Cyber Eyes)"
-      echo -e "  \e[1;32m• kali\e[0m      (Kali Dragon + Neofetch)"
       echo -e "  \e[1;32m• root\e[0m      (Big Block ROOT Access)"
       echo -e "  \e[1;32m• fsociety\e[0m  (Mr. Robot Hacker Mask)"
       echo -e "  \e[1;32m• dev\e[0m       (Developer Code Mode)"
@@ -217,21 +218,22 @@ show() {
       echo -e "\e[1;33mUsage:\e[0m show <name>"
       ;;
     *)
-      echo -e "\e[1;33mUsage:\e[0m show <skull|eyes|kali|root|fsociety|dev|hydra>  |  show list"
+      echo -e "\e[1;33mUsage:\e[0m show <kali|skull|eyes|root|fsociety|dev|hydra>  |  show list"
       ;;
   esac
 }
 
-# Load active banner on startup (Default: skull)
+# Load active banner on startup (Default: kali)
 ACTIVE_B=$(cat ~/.active_banner 2>/dev/null)
-[[ -z "$ACTIVE_B" ]] && ACTIVE_B="skull"
+[[ -z "$ACTIVE_B" ]] && ACTIVE_B="kali"
 render_banner "$ACTIVE_B"
 EOF
 
-# 5. Set Zsh as default shell
+# 5. Set default active banner to kali & Zsh as default shell
+echo "kali" > ~/.active_banner
 chsh -s zsh
 
-echo -e "\n\e[1;32m[✔] Kali-Theme Installed! Default Banner: SKULL\e[0m"
+echo -e "\n\e[1;32m[✔] Kali-Theme Installed! Default Banner: KALI\e[0m"
 echo -e "\e[1;36m[i] Switch Banners:\e[0m show list"
 echo -e "\e[1;36m[i] Custom Prompt :\e[0m kaliset <name>\n"
 sleep 1
