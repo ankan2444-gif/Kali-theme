@@ -1,11 +1,11 @@
 #!/data/data/com.termux/files/usr/bin/bash
 
 clear
-echo -e "\e[1;36m[*] Installing Kali-Theme...\e[0m"
+echo -e "\e[1;36m[*] Installing Kali-Theme (Centered & High-Detail)...\e[0m"
 
 # 1. Install required packages
 pkg update -y && pkg upgrade -y
-pkg install zsh git neofetch curl -y
+pkg install zsh git neofetch curl ncurses-utils -y
 
 # 2. Disable default Termux welcome screen
 touch ~/.hushlogin
@@ -35,7 +35,7 @@ color15=#ffffff
 COLORS
 termux-reload-settings 2>/dev/null
 
-# 4. Write clean self-contained ~/.zshrc (No extra banner files in ~)
+# 4. Write clean self-contained ~/.zshrc
 cat << 'EOF' > ~/.zshrc
 # --- Dynamic Kali Prompt ---
 set_kali_prompt() {
@@ -65,60 +65,108 @@ kaliset() {
   fi
 }
 
+# --- Auto-Center Helper Function ---
+center_block() {
+  local cols=$(tput cols 2>/dev/null)
+  [[ -z "$cols" || "$cols" -lt 20 ]] && cols=44
+  local max_len=0
+  local line clean_line len
+
+  while IFS= read -r line; do
+    clean_line=$(printf '%b' "$line" | sed 's/\x1b\[[0-9;]*m//g')
+    len=${#clean_line}
+    (( len > max_len )) && max_len=$len
+  done <<< "$1"
+
+  local pad=$(( (cols - max_len) / 2 ))
+  (( pad < 0 )) && pad=0
+  local spaces=$(printf '%*s' "$pad" "")
+
+  while IFS= read -r line; do
+    printf '%s%b\n' "$spaces" "$line"
+  done <<< "$1"
+}
+
 # --- Banner Renderer ---
 render_banner() {
   local B="$1"
   clear
+  echo ""
   case "$B" in
     kali)
       neofetch --ascii_distro Kali
       ;;
+    eyes)
+      local ART='\e[1;31m      ..::::::::..              ..::::::::..
+   .::'\''          '\''::.        .::'\''          '\''::.
+ .::    .::::::.    ::.    .::    .::::::.    ::.
+::    .::'\''    '\''::.    ::  ::    .::'\''    '\''::.    ::
+::   ::   \e[1;37m(@@)\e[1;31m   ::   ::::   ::   \e[1;37m(@@)\e[1;31m   ::   ::
+::    '\''::.    .::'\''    ::  ::    '\''::.    .::'\''    ::
+ '\''::    '\''::::::'\''    ::'\''    '\''::    '\''::::::'\''    ::'\''
+   '\''::..        ..::'\''        '\''::..        ..::'\''
+      '\'''\''::::::::'\'''\''              '\'''\''::::::::'\'''\''
+\e[1;36m  ┌──────────────────────────────────────────┐
+  │ \e[1;31mWATCHER\e[1;37m : ALL-SEEING CYBER EYES          \e[1;36m│
+  │ \e[1;31mSTATUS\e[1;37m  : TARGET LOCKED // TRACKING      \e[1;36m│
+  └──────────────────────────────────────────┘\e[0m'
+      center_block "$ART"
+      ;;
     root)
-      printf '%b\n' '\e[1;31m
-  ____   ___   ___ _____ 
- |  _ \ / _ \ / _ \_   _|
- | |_) | | | | | | || |  
- |  _ <| |_| | |_| || |  
- |_| \_\\___/ \___/ |_|  
-\e[1;32m  [ ACCESS: GRANTED # ]\e[0m'
+      local ART='\e[1;31m██████╗  ██████╗  ██████╗ ████████╗
+██╔══██╗██╔═══██╗██╔═══██╗╚══██╔══╝
+██████╔╝██║   ██║██║   ██║   ██║   
+██╔══██╗██║   ██║██║   ██║   ██║   
+██║  ██║╚██████╔╝╚██████╔╝   ██║   
+╚═╝  ╚═╝ ╚═════╝  ╚═════╝    ╚═╝   
+\e[1;32m┌─────────────────────────────────┐
+│     [ ACCESS: GRANTED # ]       │
+└─────────────────────────────────┘\e[0m'
+      center_block "$ART"
       ;;
     fsociety)
-      printf '%b\n' '\e[1;37m
-       .--------.
-     .\x27          \x27.
-    /   O      O   \
-   :           `    :
-   |   .--------.   |
-   :   \________/   :
-    \              /
-     \x27.__________.\x27
-\e[1;31m     [ FSOCIETY.DAT ]\e[0m'
+      local ART='\e[1;37m         _.-""""""""""-._
+       .'\''  _..------.._  '\''.
+      /  .'\''  _      _  '\''.  \
+     |  /   / \    / \   \  |
+     | |   ( O )  ( O )   | |
+     | |    \_/    \_/    | |
+     |  \       /\       /  |
+      \  '\''.   .'\''  '\''.   .'\''  /
+       '\''.  '\''-'\''------'\''-'\''  .'\''
+         '\''-..________..-'\''
+\e[1;31m┌─────────────────────────────────┐
+│        [ FSOCIETY.DAT ]         │
+└─────────────────────────────────┘\e[0m'
+      center_block "$ART"
       ;;
     dev)
-      printf '%b\n' '\e[1;36m
-      < / >  DEV MODE
-\e[1;32m   ┌────────────────────┐
-   │ \e[1;35mwhile\e[1;37m(alive) {     \e[1;32m│
-   │   \e[1;36meat\e[1;37m();           \e[1;32m│
-   │   \e[1;36msleep\e[1;37m();         \e[1;32m│
-   │   \e[1;33mcode\e[1;37m();          \e[1;32m│
-   │ }                  \e[1;32m│
-   └────────────────────┘\e[0m'
+      local ART='\e[1;36m       < / >  DEV MODE
+\e[1;32m┌────────────────────────────────┐
+│ \e[1;35mwhile\e[1;37m (alive) {                \e[1;32m│
+│   \e[1;36meat\e[1;37m();                       \e[1;32m│
+│   \e[1;36msleep\e[1;37m();                     \e[1;32m│
+│   \e[1;33mcode\e[1;37m();                      \e[1;32m│
+│ }                              \e[1;32m│
+└────────────────────────────────┘\e[0m'
+      center_block "$ART"
       ;;
     hydra)
-      printf '%b\n' '\e[1;32m
-      _   _ __   ______  ____      _    
-     | | | |\ \ / /  _ \|  _ \    / \   
-     | |_| | \ V /| | | | |_) |  / _ \  
-     |  _  |  | | | |_| |  _ <  / ___ \ 
-     |_| |_|  |_| |____/|_| \_\/_/   \_\
-\e[1;36m        [ EXPLOIT FRAMEWORK v2.0 ]\e[0m'
+      local ART='\e[1;32m██╗  ██╗██╗   ██╗██████╗ ██████╗  █████╗ 
+██║  ██║╚██╗ ██╔╝██╔══██╗██╔══██╗██╔══██╗
+███████║ ╚████╔╝ ██║  ██║██████╔╝███████║
+██╔══██║  ╚██╔╝  ██║  ██║██╔══██╗██╔══██║
+██║  ██║   ██║   ██████╔╝██║  ██║██║  ██║
+╚═╝  ╚═╝   ╚═╝   ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝
+\e[1;36m┌────────────────────────────────────────┐
+│       [ EXPLOIT FRAMEWORK v2.0 ]       │
+└────────────────────────────────────────┘\e[0m'
+      center_block "$ART"
       ;;
     skull|*)
-      printf '%b\n' '\e[1;36m
-       .ed"""" """$$$$be.
+      local ART='\e[1;36m       .ed"""" """$$$$be.
      -"           ^""**$$$e.
-   ."                   \x27$$$c
+   ."                   '\''$$$c
   /                      "4$$b
  d  3                      $$$$
  $  *                   .$$$$$$
@@ -129,44 +177,47 @@ $$$$P d$$$$F $ $$$$$$$$$- $$$$$$
 3$$$F "$$$$b   $"$$$$$$$  $$$$*"
  $$P"  "$$b   .$ $$$$$...e$$
   *c    ..    $$ 3$$$$$$$$$$eF
-    %ce""    $$$  $$$$$$$$$$*
+    %%ce""    $$$  $$$$$$$$$$*
      *$e.    *** d$$$$$"L$$
-      $$$      4J$$$$$% $$$
+      $$$      4J$$$$$%% $$$
      $"\x27$=e....$*$$**$cz$$"
      $  *=%4.$ L L$ P3$$$F
-     $   "%*ebJLzb$e$$$$$b
-      %..      4$$$$$$$$$$
-       $$$e   z$$$$$$$$$$%
+     $   "%%*ebJLzb$e$$$$$b
+      %%..      4$$$$$$$$$$
+       $$$e   z$$$$$$$$$$%%
         "*$c  "$$$$$$$P"
           """*$$$$$$$"
-\e[1;32m  ┌────────────────────────────────────┐
-  │ \e[1;36mOS\e[1;37m     : Kali Rolling (Termux)     \e[1;32m│
-  │ \e[1;36mSHELL\e[1;37m  : Zsh + KaliPrompt          \e[1;32m│
-  │ \e[1;36mSWITCH\e[1;37m : show list | kaliset <name>\e[1;32m│
-  └────────────────────────────────────┘\e[0m'
+\e[1;32m┌──────────────────────────────────────┐
+│ \e[1;36mOS\e[1;37m     : Kali Rolling (Termux)       \e[1;32m│
+│ \e[1;36mSHELL\e[1;37m  : Zsh + KaliPrompt            \e[1;32m│
+│ \e[1;36mSWITCH\e[1;37m : show list | kaliset <name>  \e[1;32m│
+└──────────────────────────────────────┘\e[0m'
+      center_block "$ART"
       ;;
   esac
+  echo ""
 }
 
 # --- Banner Switcher Command (show <name> | show list) ---
 show() {
   case "$1" in
-    skull|kali|root|fsociety|dev|hydra)
+    skull|eyes|kali|root|fsociety|dev|hydra)
       echo "$1" > ~/.active_banner
       render_banner "$1"
       ;;
     list)
       echo -e "\e[1;36mAvailable Banners:\e[0m"
-      echo -e "  \e[1;32m• skull\e[0m     (Default Cyber-Skull)"
+      echo -e "  \e[1;32m• skull\e[0m     (Default High-Detail Skull)"
+      echo -e "  \e[1;32m• eyes\e[0m      (Dot-Coded Cyber Eyes)"
       echo -e "  \e[1;32m• kali\e[0m      (Kali Dragon + Neofetch)"
-      echo -e "  \e[1;32m• root\e[0m      (ROOT Access Granted)"
+      echo -e "  \e[1;32m• root\e[0m      (Big Block ROOT Access)"
       echo -e "  \e[1;32m• fsociety\e[0m  (Mr. Robot Hacker Mask)"
       echo -e "  \e[1;32m• dev\e[0m       (Developer Code Mode)"
-      echo -e "  \e[1;32m• hydra\e[0m     (Hydra Exploit Framework)"
+      echo -e "  \e[1;32m• hydra\e[0m     (Big Block HYDRA Exploit)"
       echo -e "\e[1;33mUsage:\e[0m show <name>"
       ;;
     *)
-      echo -e "\e[1;33mUsage:\e[0m show <skull|kali|root|fsociety|dev|hydra>  |  show list"
+      echo -e "\e[1;33mUsage:\e[0m show <skull|eyes|kali|root|fsociety|dev|hydra>  |  show list"
       ;;
   esac
 }
