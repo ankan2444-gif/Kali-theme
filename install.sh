@@ -64,7 +64,7 @@ $$$$P d$$$$F $ $$$$$$$$$- $$$$$$
 \e[1;32m  ┌────────────────────────────────────┐
   │ \e[1;36mOS\e[1;37m     : Kali Rolling (Termux)     \e[1;32m│
   │ \e[1;36mSHELL\e[1;37m  : Zsh + KaliPrompt          \e[1;32m│
-  │ \e[1;36mCOMMANDS\e[1;37m: show skull/kali | kaliset \e[1;32m│
+  │ \e[1;36mSKULL MODE\e[1;37m: ON \e[1;32m│
   └────────────────────────────────────┘\e[0m
 SKULL
 
