@@ -91,7 +91,7 @@ center_block() {
   done <<< "$1"
 }
 
-# --- Clean Side-by-Side Skull Renderer (No % breakage, No overlap) ---
+# --- Clean Side-by-Side Skull Renderer (Fixed Shape + Vertically Centered Info) ---
 render_skull() {
   local HOST_NAME=$(cat ~/.kali_host 2>/dev/null)
   [[ -z "$HOST_NAME" ]] && HOST_NAME="localhost"
@@ -99,32 +99,36 @@ render_skull() {
   local PKGS=$(dpkg -l 2>/dev/null | grep -c '^ii')
 
   local -a SKULL=(
-    '      .ed"""" """$$$$be.     '
-    '    -"           ^""**$$$e.  '
-    '  ."                   '\''$$$c '
-    ' /                      "4$$b'
-    'd  3                      $$$$'
-    '$  *                   .$$$$$$'
+    '       .ed"""" """$$$$be.      '
+    '     -"           ^""**$$$e.   '
+    '   ."                   '\''$$$c  '
+    '  /                      "4$$b '
+    ' d  3                      $$$$'
+    ' $  *                   .$$$$$$'
     '.$  ^c           $$$$$e$$$$$$$$'
     'd$L  4.         4$$$$$$$$$$$$$'
     '$$$$b ^ceeeee.  4$$ECL.F*$$$$$'
     '$$$$P d$$$$F $ $$$$$$$$$- $$$$'
-    '3$$$F "$$$$b   $"$$$$$$$  $$$$'
-    ' $$P"  "$$b   .$ $$$$$...e$$ '
-    '  *c    ..    $$ 3$$$$$$$$$$e'
-    '    %ce""    $$$  $$$$$$$$$$*'
-    '     *$e.    *** d$$$$$"L$$  '
-    '      $$$      4J$$$$$% $$$  '
-    '     $"\x27$=e....$*$$**$cz$$"  '
-    '     $  *=%4.$ L L$ P3$$$F   '
-    '     $   "%*ebJLzb$e$$$$$b   '
-    '      %..      4$$$$$$$$$$   '
-    '       $$$e   z$$$$$$$$$$%   '
-    '        "*$c  "$$$$$$$P"     '
-    '          """*$$$$$$$"       '
+    '3$$$F "$$$$b   $"$$$$$$$  $$$$*'
+    ' $$P"  "$$b   .$ $$$$$...e$$  '
+    '  *c    ..    $$ 3$$$$$$$$$$eF '
+    '    %ce""    $$$  $$$$$$$$$$*  '
+    '     *$e.    *** d$$$$$"L$$   '
+    '      $$$      4J$$$$$% $$$   '
+    '     $"'\''$=e....$*$$**$cz$$"   '
+    '     $  *=%4.$ L L$ P3$$$F    '
+    '     $   "%*ebJLzb$e$$$$$b    '
+    '      %..      4$$$$$$$$$$    '
+    '       $$$e   z$$$$$$$$$$%    '
+    '        "*$c  "$$$$$$$P"      '
+    '          """*$$$$$$$"        '
   )
 
   local -a INFO=(
+    ""
+    ""
+    ""
+    ""
     ""
     "\e[1;32mkali\e[1;37m@\e[1;34m${HOST_NAME}\e[0m"
     "\e[1;37m-----------------\e[0m"
@@ -138,11 +142,17 @@ render_skull() {
     ""
     "\e[40m  \e[41m  \e[42m  \e[43m  \e[44m  \e[45m  \e[46m  \e[47m  \e[0m"
     "\e[100m  \e[101m  \e[102m  \e[103m  \e[104m  \e[105m  \e[106m  \e[107m  \e[0m"
+    ""
+    ""
+    ""
+    ""
+    ""
+    ""
   )
 
   local i
   for (( i=1; i<=${#SKULL[@]}; i++ )); do
-    printf "\e[1;36m%-31s\e[0m  %b\n" "${SKULL[$i]}" "${INFO[$i]}"
+    printf "\e[1;36m%-32s\e[0m %b\n" "${SKULL[$i]}" "${INFO[$i]}"
   done
 }
 
